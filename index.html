@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#F4F0E6" />
+  <title>PharmaInk — You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,400;0,500;0,600;0,700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/app.css" />
+</head>
+<body>
+  <div id="app-root">
+    <header id="app-header" class="app-header">
+      <div class="app-header__start">
+        <button type="button" id="app-back-btn" class="app-header__back" hidden aria-label="Back">←</button>
+      </div>
+      <h1 id="appTitle" class="app-header__title">You</h1>
+      <div class="app-header__end" aria-hidden="true"></div>
+    </header>
+
+    <div id="app-content" class="app-content">
+      <!-- You: dashboard -->
+      <section id="screen-you" class="screen screen--scroll you-screen is-active" aria-hidden="false">
+        <div class="you-dashboard">
+          <div class="you-profile">
+            <div class="you-avatar" aria-hidden="true">S</div>
+            <div class="you-profile__text">
+              <div class="you-greeting">Hello,</div>
+              <div class="you-name">Sarah</div>
+            </div>
+          </div>
+
+          <div class="you-cards" role="list">
+            <div class="you-card you-card--status" role="listitem">
+              <div class="you-card__tap" data-open-sub="feeling">
+                <div class="you-card__head">
+                  <span class="you-card__icon" aria-hidden="true">♥</span>
+                  <span class="you-card__title">How are you feeling</span>
+                  <span class="you-card__chev" aria-hidden="true">›</span>
+                </div>
+                <div class="you-card__body you-card__body--status">
+                  <span class="you-card__emoji" aria-hidden="true">☺</span>
+                  <div>
+                    <div class="you-card__status-line">Good today</div>
+                    <div class="you-card__meta">Last updated: Today, 9:30 AM</div>
+                  </div>
+                </div>
+                <div class="you-card__rule"></div>
+                <p class="you-card__footer">Recent improvements in energy levels and sleep quality.</p>
+              </div>
+            </div>
+
+            <button type="button" class="you-card" data-open-sub="personal" role="listitem">
+              <div class="you-card__head">
+                <span class="you-card__icon" aria-hidden="true">📋</span>
+                <span class="you-card__title">Personal data</span>
+                <span class="you-card__chev" aria-hidden="true">›</span>
+              </div>
+              <dl class="you-card__rows">
+                <div class="you-card__row"><dt>Age</dt><dd>52</dd></div>
+                <div class="you-card__row"><dt>Phase</dt><dd>Perimenopause</dd></div>
+                <div class="you-card__row"><dt>Care team</dt><dd>Dr. Chen</dd></div>
+              </dl>
+            </button>
+
+            <button type="button" class="you-card" data-open-sub="dosage" role="listitem">
+              <div class="you-card__head">
+                <span class="you-card__icon" aria-hidden="true">▣</span>
+                <span class="you-card__title">Current print dosage</span>
+                <span class="you-card__chev" aria-hidden="true">›</span>
+              </div>
+              <dl class="you-card__rows">
+                <div class="you-card__row"><dt>Target dose</dt><dd>20 µg</dd></div>
+                <div class="you-card__row"><dt>Regimen</dt><dd>Transdermal pattern</dd></div>
+                <div class="you-card__row"><dt class="you-card__row--accent">Next review</dt><dd class="you-card__row--accent">In 12 days</dd></div>
+              </dl>
+            </button>
+
+            <button type="button" class="you-card you-card--estradiol" data-hms-destination="lab" role="listitem">
+              <div class="you-card__head">
+                <span class="you-card__icon" aria-hidden="true">◈</span>
+                <span class="you-card__title">Estradiol (blood)</span>
+                <span class="you-card__chev" aria-hidden="true">›</span>
+              </div>
+              <dl class="you-card__rows">
+                <div class="you-card__row"><dt>Latest</dt><dd id="youEstradiolValue">—</dd></div>
+                <div class="you-card__row"><dt>Measured</dt><dd id="youEstradiolDate">No readings yet</dd></div>
+              </dl>
+              <p class="you-card__hint">From your HMS device — tap to measure or review history.</p>
+            </button>
+
+            <button type="button" class="you-card" data-open-sub="doctor" role="listitem">
+              <div class="you-card__head">
+                <span class="you-card__icon" aria-hidden="true">💬</span>
+                <span class="you-card__title">Chat with a doctor</span>
+                <span class="you-card__chev" aria-hidden="true">›</span>
+              </div>
+              <p class="you-card__hint">Secure messaging with your care team — typical reply within one business day.</p>
+            </button>
+          </div>
+
+          <div class="you-aggregate">
+            <div class="you-aggregate__head">
+              <span class="you-aggregate__title">Wellness overview</span>
+              <span class="you-aggregate__period">14 days</span>
+            </div>
+            <canvas id="aggregateChart" class="you-aggregate__canvas"></canvas>
+            <div class="you-aggregate__legend" id="aggregateLegend"></div>
+          </div>
+
+        </div>
+
+        <button type="button" class="you-doctor-fab" data-open-sub="doctor" aria-label="Message your doctor">
+          <span class="you-doctor-fab__icon" aria-hidden="true">💬</span>
+        </button>
+
+        <button type="button" class="you-symptom-fab" data-open-sub="symptoms" aria-label="Track symptoms — log how you feel today">
+          <span class="you-symptom-fab__icon" aria-hidden="true">+</span>
+          <span class="you-symptom-fab__text">
+            <span class="you-symptom-fab__title">Track symptoms</span>
+            <span class="you-symptom-fab__sub">Log how you feel</span>
+          </span>
+        </button>
+      </section>
+
+      <!-- HMS: device hub — print + lab -->
+      <section id="screen-hms" class="screen screen-hms" aria-hidden="true">
+        <div class="hms-scroll">
+          <div class="hms-mode-tabs" role="tablist" aria-label="HMS mode">
+            <button type="button" class="hms-mode-tab is-active" id="hmsModeTabPrint" role="tab" aria-selected="true" aria-controls="hmsPanelPrint" data-hms-mode="print">Print</button>
+            <button type="button" class="hms-mode-tab" id="hmsModeTabLab" role="tab" aria-selected="false" aria-controls="hmsPanelLab" data-hms-mode="lab">Estradiol</button>
+          </div>
+
+        <div id="hmsPanelPrint" class="hms-panel hms-panel--print">
+          <!-- 1. Timer + body silhouette -->
+          <div class="hms-hero">
+            <div class="hms-body-wrap">
+              <div class="hms-body-figure">
+                <img
+                  class="hms-body-img"
+                  src="assets/hms-woman-silhouette.png"
+                  alt=""
+                  width="400"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <div id="hmsPatchMarker" class="hms-patch-marker hms-patch-marker--overlay" aria-hidden="true"></div>
+              </div>
+              <div class="hms-patch-label">
+                <span class="hms-patch-label__dot"></span>
+                Last applied: upper left arm
+              </div>
+            </div>
+            <div class="hms-timer-block">
+              <p class="hms-timer-label">Since last print</p>
+              <p class="hms-timer-value" id="hmsTimerValue">—</p>
+              <p class="hms-timer-sub" id="hmsTimerSub"></p>
+            </div>
+          </div>
+
+          <!-- 2. Pattern carousel + upload button -->
+          <div class="hms-carousel-section">
+            <p class="hms-section-label">Patterns</p>
+            <div class="hms-carousel" id="hmsCarousel"></div>
+            <button type="button" class="btn btn-hms-upload" id="hmsUploadBtn">⬆ Upload your own art</button>
+          </div>
+
+          <!-- Upload zone (hidden until button tapped) -->
+          <div id="hmsUploadZone" class="hms-upload-card" hidden>
+            <div class="img-upload" id="imgUploadZone">
+              <input type="file" id="imgFileInput" accept="image/*" hidden />
+              <div id="imgUploadEmpty" class="img-upload__empty">
+                <span class="img-upload__icon" aria-hidden="true">⬆</span>
+                <p class="img-upload__text">Tap to choose a photo or graphic</p>
+                <p class="img-upload__hint">JPG, PNG, or SVG — converted to a dot pattern matching your dose</p>
+              </div>
+              <div id="imgUploadPreview" class="img-upload__preview" hidden>
+                <img id="imgPreviewImg" class="img-upload__img" alt="Uploaded image preview" />
+                <button type="button" class="img-upload__clear" id="imgClearBtn" aria-label="Remove image">✕</button>
+              </div>
+            </div>
+            <div class="hms-upload-actions">
+              <button type="button" class="btn" id="imgCancelBtn">Cancel</button>
+              <button type="button" class="btn primary" id="imgApplyBtn" hidden>Use this image</button>
+            </div>
+          </div>
+
+          <!-- 3. Live preview — close-up + full strip -->
+          <div class="hms-preview-card">
+            <p class="hms-section-label">Preview</p>
+            <div class="hms-preview-tabs">
+              <button type="button" class="hms-preview-tab is-active" data-preview="closeup">Close-up</button>
+              <button type="button" class="hms-preview-tab" data-preview="full">Full strip</button>
+            </div>
+            <div id="hmsPreviewCloseup" class="hms-preview-pane">
+              <canvas id="hmsCloseupCanvas" class="hms-closeup-canvas"></canvas>
+            </div>
+            <div id="hmsPreviewFull" class="hms-preview-pane" hidden>
+              <div id="canvasWrap" class="hms-canvas-wrap">
+                <canvas id="patternCanvas"></canvas>
+              </div>
+            </div>
+            <div class="hms-dose-summary">
+              <span id="hmsDoseLine">20 µg · Geometric · 200 dots</span>
+            </div>
+          </div>
+
+          <!-- Hidden elements needed by pattern.js -->
+          <textarea id="promptInput" hidden>mandala</textarea>
+          <span id="styleTag" hidden></span>
+          <span id="infoBar" hidden></span>
+          <span id="errorMsg" hidden></span>
+          <div id="loadingOverlay" hidden><div class="spinner"></div></div>
+        </div>
+
+        <div id="hmsPanelLab" class="hms-panel hms-panel--lab" hidden>
+          <div class="hms-lab-hero">
+            <p class="hms-section-label">Blood estradiol</p>
+            <div class="hms-lab-reading">
+              <span class="hms-lab-reading__value" id="hmsLabValue">—</span>
+              <span class="hms-lab-reading__unit">pg/mL</span>
+            </div>
+            <p class="hms-lab-reading__meta" id="hmsLabMeta">No readings yet. Run a test when your care team recommends it.</p>
+            <p class="hms-lab-note">Interpret results with your clinician — reference ranges vary by lab and individual care plans.</p>
+          </div>
+          <div id="hmsLabInsightCard" class="hms-lab-insights hms-lab-insights--neutral">
+            <div class="hms-lab-insights__head">
+              <p class="hms-section-label hms-lab-insights__title">Insights</p>
+              <span id="hmsLabInsightBadge" class="hms-lab-insights__badge hms-lab-insights__badge--neutral" role="status">Waiting for data</span>
+            </div>
+            <p id="hmsLabInsightText" class="hms-lab-insights__text">
+              Run a blood test to see how your estradiol lines up with your transdermal pattern. We will note here whether things look on track or worth discussing with your care team.
+            </p>
+            <button type="button" class="btn hms-lab-insights__cta" id="hmsLabInsightDoctorBtn" data-open-sub="doctor" hidden>
+              Chat with a doctor
+            </button>
+          </div>
+          <div class="hms-lab-chart-card">
+            <p class="hms-section-label">Recent readings</p>
+            <div class="hms-lab-spark-wrap">
+              <canvas id="hmsLabSparkCanvas" class="hms-lab-spark" width="320" height="120" aria-label="Estradiol trend"></canvas>
+              <p id="hmsLabSparkEmpty" class="hms-lab-spark-empty">Measurements will appear here after your first test.</p>
+            </div>
+          </div>
+        </div>
+
+        </div>
+
+        <footer id="hmsFooterPrint" class="hms-footer hms-footer--print">
+          <p id="hmsCooldownText" class="hms-footer__status">Checking…</p>
+          <button type="button" class="btn btn-hms-print primary" id="hmsPrintBtn" disabled>Print</button>
+        </footer>
+        <footer id="hmsFooterLab" class="hms-footer hms-footer--lab" hidden>
+          <p id="hmsLabFooterStatus" class="hms-footer__status">Ready when you are</p>
+          <button type="button" class="btn btn-hms-lab primary" id="hmsLabMeasureBtn">Measure estradiol</button>
+        </footer>
+      </section>
+
+      <!-- You → detail (placeholders) -->
+      <section id="screen-sub-feeling" class="screen screen--scroll you-sub-screen" aria-hidden="true">
+        <div class="you-sub-inner">
+          <p class="you-sub-lead">Check in on mood, sleep, and energy. Your entries help your care team support you.</p>
+          <div class="you-sub-placeholder">Prototype — connect check-in flow.</div>
+        </div>
+      </section>
+      <section id="screen-sub-personal" class="screen screen--scroll you-sub-screen" aria-hidden="true">
+        <div class="you-sub-inner">
+          <dl class="personal-detail-rows">
+            <div class="you-card__row"><dt>Name</dt><dd>Sarah M.</dd></div>
+            <div class="you-card__row"><dt>Age</dt><dd>52</dd></div>
+            <div class="you-card__row"><dt>Phase</dt><dd>Perimenopause</dd></div>
+            <div class="you-card__row"><dt>Care team</dt><dd>Dr. Chen</dd></div>
+          </dl>
+
+          <div class="sym-trends personal-symptom-viz" id="symTrendsPersonal">
+            <div class="sym-trends__header">
+              <h2 class="sym-trends__title">Symptom trends</h2>
+              <span class="sym-trends__period">Past 14 days · tap the chart for voice notes</span>
+            </div>
+            <div class="personal-chart-wrap">
+              <canvas id="personalAllSymptomsChart" class="personal-all-chart" width="400" height="260" aria-label="All symptoms over the past two weeks"></canvas>
+            </div>
+            <div class="personal-symptom-slider-block">
+              <div class="personal-symptom-slider-meta">
+                <span class="personal-symptom-slider-help" id="personalSliderHelp">Highlight</span>
+                <span class="personal-symptom-slider-value" id="personalSliderValue">All symptoms</span>
+              </div>
+              <input type="range" id="personalSymptomSlider" class="personal-symptom-slider" min="0" max="6" step="1" value="0" aria-label="Choose which symptom line to emphasize">
+              <div class="personal-symptom-slider-ticks" id="personalSliderTicks" aria-hidden="true"></div>
+            </div>
+            <div id="personalTranscriptionPanel" class="personal-transcription-panel" hidden>
+              <p class="personal-transcription-panel__date" id="personalTranscriptionDate"></p>
+              <div class="personal-transcription-panel__body" id="personalTranscriptionBody"></div>
+            </div>
+            <p class="personal-transcription-hint" id="personalTranscriptionHint">Tap a day on the chart to read that day&rsquo;s transcription.</p>
+          </div>
+        </div>
+      </section>
+      <section id="screen-sub-symptoms" class="screen screen--scroll you-sub-screen" aria-hidden="true">
+        <div class="you-sub-inner">
+          <p class="you-sub-lead">How would you like to log your symptoms today?</p>
+
+          <div class="sym-choices">
+            <button type="button" class="sym-choice" data-sym-mode="iris" data-iris-flow="single">
+              <span class="sym-choice__icon" aria-hidden="true">🐋</span>
+              <div class="sym-choice__text">
+                <span class="sym-choice__title">Quick voice note</span>
+                <span class="sym-choice__desc">Say everything in one recording — Iris will log symptoms from your words.</span>
+              </div>
+              <span class="sym-choice__chev" aria-hidden="true">›</span>
+            </button>
+
+            <button type="button" class="sym-choice" data-sym-mode="iris" data-iris-flow="guided">
+              <span class="sym-choice__icon" aria-hidden="true">💬</span>
+              <div class="sym-choice__text">
+                <span class="sym-choice__title">Guided check-in</span>
+                <span class="sym-choice__desc">Answer a few short questions about sleep, flashes, and how you&rsquo;re feeling.</span>
+              </div>
+              <span class="sym-choice__chev" aria-hidden="true">›</span>
+            </button>
+
+            <button type="button" class="sym-choice" data-sym-mode="manual">
+              <span class="sym-choice__icon" aria-hidden="true">✎</span>
+              <div class="sym-choice__text">
+                <span class="sym-choice__title">Enter manually</span>
+                <span class="sym-choice__desc">Pick from a list and rate severity yourself.</span>
+              </div>
+              <span class="sym-choice__chev" aria-hidden="true">›</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-sub-symptoms-iris" class="screen screen--scroll you-sub-screen" aria-hidden="true">
+        <div class="you-sub-inner iris-voice">
+
+          <!-- Idle -->
+          <div id="irisIdle" class="iris-state iris-state--idle">
+            <p class="iris-step-badge" id="irisStepBadge" hidden>Question 1 of 3</p>
+            <p class="iris-prompt" id="irisPromptText">Tap to describe how you feel</p>
+            <button type="button" id="irisRecBtn" class="iris-rec-btn" aria-label="Start recording">
+              <span class="iris-rec-icon" aria-hidden="true">●</span>
+            </button>
+            <p class="iris-hint" id="irisHintText">Iris will listen and log your symptoms.</p>
+          </div>
+
+          <!-- Recording -->
+          <div id="irisRecording" class="iris-state iris-state--recording" hidden>
+            <p class="iris-prompt" id="irisRecordingLead">Listening&hellip;</p>
+            <div class="iris-wave-wrap">
+              <canvas id="irisWaveCanvas" class="iris-wave" width="600" height="120" aria-hidden="true"></canvas>
+            </div>
+            <button type="button" id="irisStopBtn" class="iris-rec-btn is-recording" aria-label="Stop recording">
+              <span class="iris-rec-icon" aria-hidden="true">■</span>
+            </button>
+            <p class="iris-timer" id="irisTimer">0:00</p>
+            <p class="iris-hint">Tap to stop</p>
+          </div>
+
+          <!-- Transcribing -->
+          <div id="irisTranscribing" class="iris-state iris-state--transcribing" hidden>
+            <div class="spinner"></div>
+            <p class="iris-prompt">Processing your recording&hellip;</p>
+          </div>
+
+          <!-- Review -->
+          <div id="irisReview" class="iris-state iris-state--review" hidden>
+            <div class="iris-transcript" id="irisTranscript"></div>
+            <p class="iris-review-label">Detected symptoms</p>
+            <div class="iris-parsed-list" id="irisParsedList"></div>
+            <p id="irisNoSymptoms" class="iris-no-symptoms" hidden>No symptoms detected. Try re-recording with more detail.</p>
+            <div class="iris-review-actions">
+              <button type="button" class="btn" id="irisRerecordBtn">Re-record</button>
+              <button type="button" class="btn primary" id="irisConfirmBtn">Confirm</button>
+            </div>
+          </div>
+
+          <!-- Saved -->
+          <div id="irisSaved" class="iris-state iris-state--saved" hidden>
+            <p class="iris-saved-msg">Logged &mdash; your care team will see this.</p>
+            <div id="irisSavedSevere" class="iris-saved-severe" hidden>
+              <p class="iris-saved-severe__lead">Those scores look quite high. Would you like to reach out to your care team?</p>
+              <div class="iris-saved-severe__actions">
+                <button type="button" class="btn primary" id="irisDoctorChatBtn">Chat with a doctor</button>
+                <button type="button" class="btn" id="irisSavedDismissBtn">Not now</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <section id="screen-sub-symptoms-manual" class="screen screen--scroll you-sub-screen" aria-hidden="true">
+        <div class="you-sub-inner">
+          <p class="you-sub-lead">Select a symptom, then rate how you're feeling today.</p>
+
+          <div class="sym-manual-list" id="symManualList">
+            <button type="button" class="sym-manual-item" data-symptom="hot-flashes">
+              <span class="sym-manual-icon" aria-hidden="true">🔥</span>
+              <span class="sym-manual-name">Hot flashes</span>
+              <span class="sym-manual-chev" aria-hidden="true">›</span>
+            </button>
+            <button type="button" class="sym-manual-item" data-symptom="sleep">
+              <span class="sym-manual-icon" aria-hidden="true">🌙</span>
+              <span class="sym-manual-name">Sleep impact</span>
+              <span class="sym-manual-chev" aria-hidden="true">›</span>
+            </button>
+            <button type="button" class="sym-manual-item" data-symptom="mood">
+              <span class="sym-manual-icon" aria-hidden="true">☁</span>
+              <span class="sym-manual-name">Mood</span>
+              <span class="sym-manual-chev" aria-hidden="true">›</span>
+            </button>
+            <button type="button" class="sym-manual-item" data-symptom="fatigue">
+              <span class="sym-manual-icon" aria-hidden="true">⚡</span>
+              <span class="sym-manual-name">Fatigue</span>
+              <span class="sym-manual-chev" aria-hidden="true">›</span>
+            </button>
+            <button type="button" class="sym-manual-item" data-symptom="headache">
+              <span class="sym-manual-icon" aria-hidden="true">💠</span>
+              <span class="sym-manual-name">Headache</span>
+              <span class="sym-manual-chev" aria-hidden="true">›</span>
+            </button>
+            <button type="button" class="sym-manual-item" data-symptom="joint-pain">
+              <span class="sym-manual-icon" aria-hidden="true">🦴</span>
+              <span class="sym-manual-name">Joint pain</span>
+              <span class="sym-manual-chev" aria-hidden="true">›</span>
+            </button>
+            <button type="button" class="sym-manual-item" data-symptom="brain-fog">
+              <span class="sym-manual-icon" aria-hidden="true">🌫</span>
+              <span class="sym-manual-name">Brain fog</span>
+              <span class="sym-manual-chev" aria-hidden="true">›</span>
+            </button>
+            <button type="button" class="sym-manual-item" data-symptom="dryness">
+              <span class="sym-manual-icon" aria-hidden="true">💧</span>
+              <span class="sym-manual-name">Dryness</span>
+              <span class="sym-manual-chev" aria-hidden="true">›</span>
+            </button>
+            <button type="button" class="sym-manual-item" data-symptom="weight">
+              <span class="sym-manual-icon" aria-hidden="true">⚖</span>
+              <span class="sym-manual-name">Weight / bloating</span>
+              <span class="sym-manual-chev" aria-hidden="true">›</span>
+            </button>
+            <button type="button" class="sym-manual-item" data-symptom="heart">
+              <span class="sym-manual-icon" aria-hidden="true">💓</span>
+              <span class="sym-manual-name">Heart palpitations</span>
+              <span class="sym-manual-chev" aria-hidden="true">›</span>
+            </button>
+          </div>
+
+          <div id="symManualRate" class="sym-rate" hidden>
+            <button type="button" class="sym-rate__back" id="symRateBack" aria-label="Back to list">← Back</button>
+            <p class="sym-rate__title" id="symRateTitle">—</p>
+            <p class="sym-rate__prompt">How severe is it right now?</p>
+            <div class="sym-rate__scale">
+              <button type="button" class="sym-rate__btn" data-sev="1">1<span>Mild</span></button>
+              <button type="button" class="sym-rate__btn" data-sev="2">2</button>
+              <button type="button" class="sym-rate__btn" data-sev="3">3<span>Moderate</span></button>
+              <button type="button" class="sym-rate__btn" data-sev="4">4</button>
+              <button type="button" class="sym-rate__btn" data-sev="5">5<span>Severe</span></button>
+            </div>
+            <div id="symRateConfirm" class="sym-rate__confirm" hidden>
+              <p class="sym-rate__saved">Logged — your care team will see this.</p>
+              <div id="symRateDoctorCta" class="sym-rate__doctor-cta" hidden>
+                <p class="sym-rate__doctor-lead">That score sounds difficult. Want to message your doctor?</p>
+                <button type="button" class="btn primary sym-rate__doctor-btn" id="symManualDoctorBtn">Chat with a doctor</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="screen-sub-dosage" class="screen screen--scroll you-sub-screen" aria-hidden="true">
+        <div class="you-sub-inner">
+          <p class="you-sub-lead">Summary of your current transdermal print plan. Full editing lives under <strong>HMS</strong>.</p>
+          <div class="you-sub-placeholder">Prototype — sync with HMS generator.</div>
+        </div>
+      </section>
+      <section id="screen-sub-doctor" class="screen screen--scroll you-sub-screen" aria-hidden="true">
+        <div class="you-sub-inner doc-chat">
+          <div class="doc-chat__notice">Secure message with Dr. Chen. Not for emergencies.</div>
+
+          <div class="doc-chat__messages" id="docMessages">
+            <div class="doc-msg doc-msg--doc">
+              <div class="doc-msg__avatar">DC</div>
+              <div class="doc-msg__bubble">
+                <p class="doc-msg__name">Dr. Chen</p>
+                <p>Hi Sarah, how have things been since our last check-in? Any changes you want to flag?</p>
+                <span class="doc-msg__time">Mar 28, 2:15 PM</span>
+              </div>
+            </div>
+            <div class="doc-msg doc-msg--user">
+              <div class="doc-msg__bubble">
+                <p>Hi Dr. Chen. The hot flashes have been getting worse this past week, especially at night. I'm also having a lot of brain fog and I feel exhausted most days.</p>
+                <span class="doc-msg__time">Mar 28, 4:40 PM</span>
+              </div>
+            </div>
+            <div class="doc-msg doc-msg--doc">
+              <div class="doc-msg__avatar">DC</div>
+              <div class="doc-msg__bubble">
+                <p class="doc-msg__name">Dr. Chen</p>
+                <p>I'm sorry to hear that. Those symptoms together can sometimes indicate a shift in hormone levels. Let's get some data before we adjust anything.</p>
+                <p>I'd like you to do a <strong>urine hormone panel</strong> so we can check your estradiol and progesterone levels. I'll send the requisition to your pharmacy — you should be able to pick up the kit tomorrow.</p>
+                <span class="doc-msg__time">Mar 28, 5:10 PM</span>
+              </div>
+            </div>
+            <div class="doc-msg doc-msg--user">
+              <div class="doc-msg__bubble">
+                <p>Okay, that sounds good. Should I keep using the same patch dose in the meantime?</p>
+                <span class="doc-msg__time">Mar 29, 9:05 AM</span>
+              </div>
+            </div>
+            <div class="doc-msg doc-msg--doc">
+              <div class="doc-msg__avatar">DC</div>
+              <div class="doc-msg__bubble">
+                <p class="doc-msg__name">Dr. Chen</p>
+                <p>Yes, keep your current dose for now. Once we see the results — usually 2–3 business days — we'll review together and decide if an adjustment makes sense. Hang in there.</p>
+                <span class="doc-msg__time">Mar 29, 10:30 AM</span>
+              </div>
+            </div>
+          </div>
+
+          <form id="docChatForm" class="doc-chat__form" autocomplete="off">
+            <input type="text" id="docChatInput" class="doc-chat__input" placeholder="Message Dr. Chen…" />
+            <button type="submit" class="btn primary doc-chat__send" aria-label="Send">→</button>
+          </form>
+        </div>
+      </section>
+    </div>
+
+    <nav id="app-nav" class="app-nav" role="navigation" aria-label="Main">
+      <button type="button" class="app-nav-item is-active" data-screen="you" aria-current="page">
+        <span class="app-nav-icon" aria-hidden="true">◎</span>
+        You
+      </button>
+      <button type="button" class="app-nav-item" data-screen="hms">
+        <span class="app-nav-icon" aria-hidden="true">▦</span>
+        HMS
+      </button>
+    </nav>
+  </div>
+
+  <!-- HMS: pattern source sheet -->
+  <!-- pattern sheet removed — replaced by inline carousel + create-your-own -->
+
+  <script src="js/app.js" defer></script>
+  <script src="js/pattern.js" defer></script>
+  <script src="js/hms.js" defer></script>
+  <script src="js/symptoms.js" defer></script>
+</body>
+</html>
